@@ -468,38 +468,35 @@
 	/*
 		Validate Contact Form
 	*/
-	$('#cform').validate({
-		rules: {
-			name: {
-				required: true
-			},
-			message: {
-				required: true
-			},
-			email: {
-				required: true,
-				email: true
-			}
-		},
-		success: 'valid',
-		submitHandler: function() {
-			$.ajax({
-				url: 'mailer/feedback.php',
-				type: 'post',
-				dataType: 'json',
-				data: 'name='+ $("#cform").find('input[name="name"]').val() + '&email='+ $("#cform").find('input[name="email"]').val() + '&message=' + $("#cform").find('textarea[name="message"]').val(),
-				beforeSend: function() {
-				
-				},
-				complete: function() {
-				
-				},
-				success: function(data) {
-					$('#cform').fadeOut();
-					$('.alert-success').delay(1000).fadeIn();
-				}
-			});
+	var form = document.getElementById("cform");
+	
+	async function handleSubmit(event) {
+	event.preventDefault();
+	var status = document.getElementById("alert-success");
+	var data = new FormData(event.target);
+	fetch(event.target.action, {
+		method: form.method,
+		body: data,
+		headers: {
+			'Accept': 'application/json'
 		}
+	}).then(response => {
+		if (response.ok) {
+		status.innerHTML = "Thanks for your submission!";
+		form.reset()
+		} else {
+		response.json().then(data => {
+			if (Object.hasOwn(data, 'errors')) {
+			status.innerHTML = data["errors"].map(error => error["message"]).join(", ")
+			} else {
+			status.innerHTML = "Oops! There was a problem submitting your form"
+			}
+		})
+		}
+	}).catch(error => {
+		status.innerHTML = "Oops! There was a problem submitting your form"
 	});
+	}
+	form.addEventListener("submit", handleSubmit)
 	
 } )( jQuery );
