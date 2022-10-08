@@ -3046,11 +3046,13 @@ iframe, object {
 }
 
 .popup-box .image {
-	height: 560px;
+	height: auto;
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: cover;
 }
+
+
 
 
 .popup-box .image img {
